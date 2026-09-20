@@ -1,0 +1,7 @@
+streamlit
+joblib
+scikit-learn
+lightgbm
+pytesseract
+Pillow
+pandas
