@@ -28,3 +28,21 @@ def test_verdict_levels():
     assert verdict(False, 2) == "Suspicious"
     assert verdict(True, 1) == "Phishing"
     assert verdict(False, 3) == "Phishing"
+
+
+def test_refund_download_lure_scores_high():
+    score, reasons = analyse("A refund of R2,300 is available for you. Download the attached document details.")
+    assert score >= 3
+    assert any("refund" in r.lower() for r in reasons)
+
+
+def test_genuine_refund_notice_stays_low():
+    text = ("Your refund of R1,200 for the overpaid registration fee will be paid into the bank "
+            "account on file within 10 working days. No action is needed from you.")
+    score, _ = analyse(text)
+    assert score < 2
+
+
+def test_file_request_under_threat_scores_high():
+    score, _ = analyse("Invoice overdue: open the attached file to view the payment details. Legal action will begin tomorrow.")
+    assert score >= 3

@@ -15,6 +15,9 @@ THREAT = r"suspend|deregister|blocked|locked|deleted|permanent|legal action|clos
 PAYPRESS = r"pay now|pay the|processing fee|delivery fee|customs fee|gift cards?|guaranteed|invest r|claim (your|it|yours)|release the (funds|payment)|pay online now|enter your card|reimburse|send me the codes?"
 REASSURE = r"never ask|no action is needed|no action needed|in person|do not send|do not click|official (university )?(website|page)|from the university website|paper form|report them|visit the .{0,40}office|at the .{0,40}(office|desk)|through the university website"
 
+MONEYLURE = r"refunds?|you have won|winner|cash prize|prize|lottery|free money|unclaimed|inheritance|pre-?approved"
+FILELURE = r"download|open (the )?attach|attached (document|file)|shared (a )?(document|file)|document details|pdf document|open the (file|document)"
+
 
 def analyse(text):
     """Return (score, reasons). Higher score means more phishing signs."""
@@ -25,6 +28,8 @@ def analyse(text):
     urg = bool(re.search(URGENT, t))
     thr = bool(re.search(THREAT, t))
     pay = bool(re.search(PAYPRESS, t))
+    money = bool(re.search(MONEYLURE, t))
+    filel = bool(re.search(FILELURE, t))
     score, reasons = 0, []
     if cred and (act or link):
         score += 3
@@ -44,6 +49,15 @@ def analyse(text):
     if pay:
         score += 2
         reasons.append("Asks for payment or fees, gift cards, or promises easy money")
+    if money and filel:
+        score += 3
+        reasons.append("Money, refund or prize wording combined with a request to download or open a file")
+    elif money and link:
+        score += 2
+        reasons.append("Money, refund or prize wording combined with a link")
+    elif filel and (urg or thr):
+        score += 2
+        reasons.append("Pushes you to open or download a file under pressure")
     if re.search(REASSURE, t):
         score -= 3
         reasons.append("Has reassurance wording typical of genuine notices (lowers the score)")
