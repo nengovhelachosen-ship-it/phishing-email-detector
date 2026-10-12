@@ -5,3 +5,4 @@ lightgbm
 pytesseract
 Pillow
 pandas
+requests

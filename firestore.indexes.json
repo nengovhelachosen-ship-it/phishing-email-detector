@@ -1,0 +1,15 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "history",
+      "fieldPath": "imageBase64",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "history",
+      "fieldPath": "emailText",
+      "indexes": []
+    }
+  ]
+}
